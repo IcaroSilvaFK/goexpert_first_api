@@ -1,8 +1,6 @@
 package database
 
 import (
-	"fmt"
-
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
 	"gorm.io/gorm"
 )
@@ -19,7 +17,6 @@ func NewUserDB(db *gorm.DB) *User {
 }
 
 func (u *User) Create(user *entities.User) error {
-	fmt.Println(user)
 	return u.DB.Create(user).Error
 }
 
@@ -51,7 +48,7 @@ func (u *User) FindById(id string) (*entities.User, error) {
 
 func (u *User) Delete(id string) error {
 
-	tx := u.DB.Delete(&entities.User{}, id)
+	tx := u.DB.Where("id = ?", id).Delete(&entities.User{})
 
 	if tx.Error != nil {
 		return tx.Error
