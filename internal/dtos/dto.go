@@ -1,4 +1,4 @@
-package dto
+package dtos
 
 type CreateProductInput struct {
 	Name  string  `json:"name"`
