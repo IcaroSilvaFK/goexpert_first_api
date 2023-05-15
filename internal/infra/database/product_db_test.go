@@ -101,7 +101,7 @@ func TestShouldListAllProducts(t *testing.T) {
 
 	assert.Nil(t, err)
 
-	product, err := productDB.ListAll(0, 0, "asc")
+	product, err := productDB.FindAll(0, 0, "asc")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, product)
@@ -122,7 +122,7 @@ func TestShouldListAllProductsByPage(t *testing.T) {
 
 	db.CreateInBatches([]*entities.Product{p, p1, p2, p3}, 3)
 
-	product, err := productDB.ListAll(1, 2, "asc")
+	product, err := productDB.FindAll(1, 2, "asc")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, product)

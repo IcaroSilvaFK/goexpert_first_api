@@ -22,7 +22,7 @@ func (p *Product) Create(product *entities.Product) error {
 	return p.DB.Create(product).Error
 }
 
-func (p *Product) ListAll(page, limit int, sort string) (*[]entities.Product, error) {
+func (p *Product) FindAll(page, limit int, sort string) (*[]entities.Product, error) {
 
 	if strings.TrimSpace(sort) != "" && sort != "asc" && sort != "desc" {
 		sort = "asc"
