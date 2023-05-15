@@ -55,7 +55,7 @@ func (p *Product) FindById(id string) (*entities.Product, error) {
 	return &product, nil
 }
 
-func (p *Product) Update(id, name string, price int) error {
+func (p *Product) Update(id, name string, price float64) error {
 
 	var product entities.Product
 

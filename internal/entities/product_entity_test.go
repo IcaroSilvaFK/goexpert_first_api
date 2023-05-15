@@ -14,7 +14,7 @@ func TestShouldCreateNewProduct(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, p)
 	assert.Equal(t, p.Name, "Test Product", p.Name)
-	assert.Equal(t, 10, p.Price)
+	assert.Equal(t, float64(10), p.Price)
 	assert.NotNil(t, p.Price)
 	assert.NotNil(t, p.CreatedAt)
 }

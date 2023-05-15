@@ -10,19 +10,21 @@ import (
 	"gorm.io/gorm"
 )
 
+func generateDatabase() *gorm.DB {
+	db, _ := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
+	db.AutoMigrate(&entities.Product{})
+	return db
+}
+
 func TestShouldCreateNewProduct(t *testing.T) {
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-
-	assert.Nil(t, err)
-
-	db.AutoMigrate(&entities.Product{})
+	db := generateDatabase()
 
 	productDB := database.NewProductDB(db)
 
 	p, _ := entities.NewProduct("Product 1", 10)
 
-	err = productDB.Create(p)
+	err := productDB.Create(p)
 
 	assert.Nil(t, err)
 
@@ -39,17 +41,13 @@ func TestShouldCreateNewProduct(t *testing.T) {
 
 func TestShouldFindProductById(t *testing.T) {
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-
-	assert.Nil(t, err)
-
-	db.AutoMigrate(&entities.Product{})
+	db := generateDatabase()
 
 	productDB := database.NewProductDB(db)
 
 	p, _ := entities.NewProduct("Product 1", 10)
 
-	err = productDB.Create(p)
+	err := productDB.Create(p)
 
 	assert.Nil(t, err)
 
@@ -64,17 +62,13 @@ func TestShouldFindProductById(t *testing.T) {
 
 func TestShouldUpdateProduct(t *testing.T) {
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-
-	assert.Nil(t, err)
-
-	db.AutoMigrate(&entities.Product{})
+	db := generateDatabase()
 
 	productDB := database.NewProductDB(db)
 
 	p, _ := entities.NewProduct("Product 1", 10)
 
-	err = productDB.Create(p)
+	err := productDB.Create(p)
 
 	assert.Nil(t, err)
 
@@ -87,16 +81,12 @@ func TestShouldUpdateProduct(t *testing.T) {
 	assert.NotNil(t, product)
 	assert.Equal(t, product.Name, "Teste")
 	assert.Equal(t, product.ID, product.ID)
-	assert.Equal(t, product.Price, 20)
+	assert.Equal(t, product.Price, float64(20))
 }
 
 func TestShouldListAllProducts(t *testing.T) {
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-
-	assert.Nil(t, err)
-
-	db.AutoMigrate(&entities.Product{})
+	db := generateDatabase()
 
 	productDB := database.NewProductDB(db)
 
@@ -107,9 +97,7 @@ func TestShouldListAllProducts(t *testing.T) {
 
 	db.CreateInBatches([]*entities.Product{p, p1, p2, p3}, 3)
 
-	assert.Nil(t, err)
-
-	err = productDB.Update(p.ID.String(), "Teste", 20)
+	err := productDB.Update(p.ID.String(), "Teste", 20)
 
 	assert.Nil(t, err)
 
@@ -123,11 +111,7 @@ func TestShouldListAllProducts(t *testing.T) {
 
 func TestShouldListAllProductsByPage(t *testing.T) {
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-
-	assert.Nil(t, err)
-
-	db.AutoMigrate(&entities.Product{})
+	db := generateDatabase()
 
 	productDB := database.NewProductDB(db)
 
@@ -137,12 +121,6 @@ func TestShouldListAllProductsByPage(t *testing.T) {
 	p3, _ := entities.NewProduct("Product 4", 10)
 
 	db.CreateInBatches([]*entities.Product{p, p1, p2, p3}, 3)
-
-	assert.Nil(t, err)
-
-	err = productDB.Update(p.ID.String(), "Teste", 20)
-
-	assert.Nil(t, err)
 
 	product, err := productDB.ListAll(1, 2, "asc")
 
@@ -154,17 +132,13 @@ func TestShouldListAllProductsByPage(t *testing.T) {
 
 func TestShouldDeleteProduct(t *testing.T) {
 
-	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
-
-	assert.Nil(t, err)
-
-	db.AutoMigrate(&entities.Product{})
+	db := generateDatabase()
 
 	productDB := database.NewProductDB(db)
 
 	p, _ := entities.NewProduct("Product 1", 10)
 
-	err = productDB.Create(p)
+	err := productDB.Create(p)
 
 	assert.Nil(t, err)
 
