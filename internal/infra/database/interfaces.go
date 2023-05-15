@@ -8,3 +8,11 @@ type UserInterface interface {
 	FindById(id string) (*entities.User, error)
 	Delete(id string) error
 }
+
+type ProductInterface interface {
+	Create(product *entities.Product) error
+	FindAll(page, limit int, sort string) ([]*entities.Product, error)
+	FindById(id string) (*entities.Product, error)
+	Update(product *entities.Product) error
+	Delete(id string) error
+}
