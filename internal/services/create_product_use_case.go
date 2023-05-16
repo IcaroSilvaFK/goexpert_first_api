@@ -25,7 +25,7 @@ func (pdb *CreateProductUseCase) Execute(p *entities.Product) error {
 
 	err := pdb.ProductDB.Create(p)
 
-	if err != nil {
+	if err != nil { //O(1)
 		return err
 	}
 

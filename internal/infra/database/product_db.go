@@ -24,19 +24,19 @@ func (p *Product) Create(product *entities.Product) error {
 
 func (p *Product) FindAll(page, limit int, sort string) (*[]entities.Product, error) {
 
-	if strings.TrimSpace(sort) != "" && sort != "asc" && sort != "desc" {
+	if strings.TrimSpace(sort) != "" && sort != "asc" && sort != "desc" { //O(1)
 		sort = "asc"
 	}
 
 	var products []entities.Product
 	var err error
 
-	current := (page - 1) * limit
-	if page != 0 && limit != 0 {
+	current := (page - 1) * limit //O(1)
+	if page != 0 && limit != 0 {  //O(1)
 		err = p.DB.Limit(limit).Offset(current).Find(&products).Order("created_at" + sort).Error
 
 	} else {
-		err = p.DB.Find(&products).Order("created_at" + sort).Error
+		err = p.DB.Find(&products).Order("created_at" + sort).Error //O(n)
 	}
 
 	return &products, err
@@ -46,9 +46,9 @@ func (p *Product) FindById(id string) (*entities.Product, error) {
 
 	var product entities.Product
 
-	err := p.DB.Where("id = ?", id).First(&product).Error
+	err := p.DB.Where("id = ?", id).First(&product).Error //O(n)
 
-	if err != nil {
+	if err != nil { //O(1)
 		return nil, err
 	}
 
