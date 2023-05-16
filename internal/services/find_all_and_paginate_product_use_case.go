@@ -6,14 +6,14 @@ import (
 )
 
 type FindAllAndPaginateProductUseCase struct {
-	ProductDB *database.Product
+	ProductDB database.ProductInterface
 }
 
 type FindAllAndPaginateProductUseCaseInterface interface {
 	Execute(page, limit int, sort string) (*[]entities.Product, error)
 }
 
-func NewFindAllAndPaginateProductUseCase(db *database.Product) FindAllAndPaginateProductUseCaseInterface {
+func NewFindAllAndPaginateProductUseCase(db database.ProductInterface) FindAllAndPaginateProductUseCaseInterface {
 	return &FindAllAndPaginateProductUseCase{
 		ProductDB: db,
 	}

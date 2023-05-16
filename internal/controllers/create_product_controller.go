@@ -9,7 +9,10 @@ import (
 )
 
 type ProductController struct {
-	Service services.CreateProductUseCaseInterface
+	createProductService   services.CreateProductUseCaseInterface
+	findByIdProductService services.FindProductByIdUseCaseInterface
+	findAllProductService  services.FindAllAndPaginateProductUseCaseInterface
+	deleteProductService   services.DeleteProductUseCaseInterface
 }
 
 type ProductControllerInterface interface {
@@ -19,10 +22,18 @@ type ProductControllerInterface interface {
 	// Delete(w http.ResponseWriter, r *http.Request)
 }
 
-func NewProductController(s services.CreateProductUseCaseInterface) ProductControllerInterface {
+func NewProductController(
+	createProductService services.CreateProductUseCaseInterface,
+	findByIdProductService services.FindProductByIdUseCaseInterface,
+	findAllProductService services.FindAllAndPaginateProductUseCaseInterface,
+	deleteProductService services.DeleteProductUseCaseInterface,
+) ProductControllerInterface {
 
 	return &ProductController{
-		Service: s,
+		createProductService:   createProductService,
+		findByIdProductService: findByIdProductService,
+		findAllProductService:  findAllProductService,
+		deleteProductService:   deleteProductService,
 	}
 
 }
@@ -42,7 +53,7 @@ func (ct *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := ct.Service.Execute(&p)
+	err := ct.createProductService.Execute(&p)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

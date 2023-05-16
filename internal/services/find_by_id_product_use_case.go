@@ -13,7 +13,7 @@ type FindProductByIdUseCaseInterface interface {
 	Execute(id string) (*entities.Product, error)
 }
 
-func NewFindProductByIdUseCase(db *database.Product) FindProductByIdUseCaseInterface {
+func NewFindProductByIdUseCase(db database.ProductInterface) FindProductByIdUseCaseInterface {
 	return &FindProductByIdUseCase{
 		ProductDB: db,
 	}

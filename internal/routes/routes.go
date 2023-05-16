@@ -14,8 +14,17 @@ func InitializeRoutes() {
 	db.AutoMigrate(&entities.User{}, &entities.Product{})
 
 	productDB := database.NewProductDB(db)
-	pService := services.NewCreateProductUseCase(productDB)
-	pController := controllers.NewProductController(pService)
+	pServiceCreateProductService := services.NewCreateProductUseCase(productDB)
+	pServiceFindByIdProductService := services.NewFindProductByIdUseCase(productDB)
+	pServiceFindAllProductService := services.NewFindAllAndPaginateProductUseCase(productDB)
+	pServiceDeleteProductService := services.NewDeleteProductUseCase(productDB)
+
+	pController := controllers.NewProductController(
+		pServiceCreateProductService,
+		pServiceFindByIdProductService,
+		pServiceFindAllProductService,
+		pServiceDeleteProductService,
+	)
 
 	http.HandleFunc("/products", pController.Create)
 

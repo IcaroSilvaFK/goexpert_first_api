@@ -13,7 +13,7 @@ type CreateProductUseCaseInterface interface {
 	Execute(*entities.Product) error
 }
 
-func NewCreateProductUseCase(pdb *database.Product) CreateProductUseCaseInterface {
+func NewCreateProductUseCase(pdb database.ProductInterface) CreateProductUseCaseInterface {
 
 	return &CreateProductUseCase{
 		ProductDB: pdb,
