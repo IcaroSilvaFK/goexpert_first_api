@@ -6,21 +6,24 @@ import (
 
 	"github.com/IcaroSilvaFK/goexpert_first_api/configs"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/routes"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
 
 	cfg, err := configs.LoadConfig(".")
+	r := chi.NewRouter()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	routes.InitializeRoutes()
+	routes.InitializeProductsRoutes(r)
+	routes.InitializeUserRoutes(r)
 
 	log.Println("🚀Server running at port", cfg.WebServerPort)
 
-	http.ListenAndServe(cfg.WebServerPort, nil)
+	http.ListenAndServe(cfg.WebServerPort, r)
 }
 
 // type ProductHandler struct {
