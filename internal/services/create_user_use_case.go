@@ -9,14 +9,14 @@ type CreateUserUseCase struct {
 	userDB database.UserInterface
 }
 
-type CreateUserUseCaseInterface interface {
+type UserUseCaseInterface interface {
 	Create(user *entities.User) error
 	FindByEmail(string) (*entities.User, error)
 	FindById(string) (*entities.User, error)
 	Delete(id string) error
 }
 
-func NewUserUseCase(userDB database.UserInterface) CreateUserUseCaseInterface {
+func NewUserUseCase(userDB database.UserInterface) UserUseCaseInterface {
 	return &CreateUserUseCase{
 		userDB: userDB,
 	}

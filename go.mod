@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0
+	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/jwtauth v1.2.0
 	github.com/google/uuid v1.3.0
 	github.com/spf13/viper v1.15.0
@@ -15,7 +16,6 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-chi/chi/v5 v5.0.8 // indirect
 	github.com/goccy/go-json v0.3.5 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect

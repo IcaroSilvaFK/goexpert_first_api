@@ -2,15 +2,13 @@ package routes
 
 import (
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/controllers"
-	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/infra/database"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/services"
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
-func InitializeProductsRoutes(r *chi.Mux) {
-	db := database.InitializeDatabase()
-	db.AutoMigrate(&entities.User{}, &entities.Product{})
+func InitializeProductsRoutes(r *chi.Mux, db *gorm.DB) {
 
 	productDB := database.NewProductDB(db)
 	pServiceCreateProductService := services.NewCreateProductUseCase(productDB)

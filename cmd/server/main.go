@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"github.com/IcaroSilvaFK/goexpert_first_api/configs"
+	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
+	"github.com/IcaroSilvaFK/goexpert_first_api/internal/infra/database"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/routes"
 	"github.com/go-chi/chi/v5"
 )
@@ -13,13 +15,15 @@ func main() {
 
 	cfg, err := configs.LoadConfig(".")
 	r := chi.NewRouter()
+	db := database.InitializeDatabase()
+	db.AutoMigrate(&entities.User{}, &entities.Product{})
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	routes.InitializeProductsRoutes(r)
-	routes.InitializeUserRoutes(r)
+	routes.InitializeProductsRoutes(r, db)
+	routes.InitializeUserRoutes(r, db)
 
 	log.Println("🚀Server running at port", cfg.WebServerPort)
 

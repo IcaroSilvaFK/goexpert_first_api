@@ -35,16 +35,6 @@ func NewUserEntity(email, name, password string) (*User, error) {
 
 }
 
-func (u *User) Save() error {
-	return nil
-}
-func (u *User) Update(name, email string) error {
-	return nil
-}
-func (u *User) Delete(id string) error {
-	return nil
-}
-
 func (u *User) ValidatePassword(p string) error {
 
 	err := utils.VerifyHash(p, u.Password)
