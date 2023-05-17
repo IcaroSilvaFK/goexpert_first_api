@@ -13,13 +13,14 @@ type ProductController struct {
 	findByIdProductService services.FindProductByIdUseCaseInterface
 	findAllProductService  services.FindAllAndPaginateProductUseCaseInterface
 	deleteProductService   services.DeleteProductUseCaseInterface
+	updateProductService   services.UpdateProductUseCaseInterface
 }
 
 type ProductControllerInterface interface {
 	Create(w http.ResponseWriter, r *http.Request)
-	// Update(w http.ResponseWriter, r *http.Request)
-	// List(w http.ResponseWriter, r *http.Request)
-	// Delete(w http.ResponseWriter, r *http.Request)
+	Update(w http.ResponseWriter, r *http.Request)
+	List(w http.ResponseWriter, r *http.Request)
+	Delete(w http.ResponseWriter, r *http.Request)
 }
 
 func NewProductController(
@@ -27,6 +28,7 @@ func NewProductController(
 	findByIdProductService services.FindProductByIdUseCaseInterface,
 	findAllProductService services.FindAllAndPaginateProductUseCaseInterface,
 	deleteProductService services.DeleteProductUseCaseInterface,
+	updateProductService services.UpdateProductUseCaseInterface,
 ) ProductControllerInterface {
 
 	return &ProductController{
@@ -34,8 +36,8 @@ func NewProductController(
 		findByIdProductService: findByIdProductService,
 		findAllProductService:  findAllProductService,
 		deleteProductService:   deleteProductService,
+		updateProductService:   updateProductService,
 	}
-
 }
 
 func (ct *ProductController) Create(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +67,35 @@ func (ct *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(p)
 }
 
-// func (ct *ProductController) Update(w http.ResponseWriter, r *http.Request)
-// func (ct *ProductController) List(w http.ResponseWriter, r *http.Request)
-// func (ct *ProductController) Delete(w http.ResponseWriter, r *http.Request)
+func (ct *ProductController) Update(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("Method not allowed"))
+	}
+
+	id := r.URL.Query().Get("id")
+
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("ID is required"))
+	}
+
+	var p entities.Product
+
+	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err := ct.updateProductService.Execute(id, p)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error on update product " + err.Error()))
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+func (ct *ProductController) List(w http.ResponseWriter, r *http.Request)
+func (ct *ProductController) Delete(w http.ResponseWriter, r *http.Request)

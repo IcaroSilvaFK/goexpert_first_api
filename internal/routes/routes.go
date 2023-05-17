@@ -15,8 +15,11 @@ func InitializeRoutes() {
 
 	productDB := database.NewProductDB(db)
 	pServiceCreateProductService := services.NewCreateProductUseCase(productDB)
-	pServiceFindByIdProductService := services.NewFindProductByIdUseCase(productDB)
-	pServiceFindAllProductService := services.NewFindAllAndPaginateProductUseCase(productDB)
+	pServiceFindByIdProductService := services.
+		NewFindProductByIdUseCase(productDB)
+	pServiceFindAllProductService := services.
+		NewFindAllAndPaginateProductUseCase(productDB)
+	pServiceUpdateProductService := services.NewUpdateProductUseCase(productDB)
 	pServiceDeleteProductService := services.NewDeleteProductUseCase(productDB)
 
 	pController := controllers.NewProductController(
@@ -24,8 +27,10 @@ func InitializeRoutes() {
 		pServiceFindByIdProductService,
 		pServiceFindAllProductService,
 		pServiceDeleteProductService,
+		pServiceUpdateProductService,
 	)
 
+	http.HandleFunc("/products", pController.Create)
 	http.HandleFunc("/products", pController.Create)
 
 }
