@@ -2,6 +2,16 @@ POST http://localhost:8080/products
 Content-Type: application/json
 
 {
-  "name": "My product1",
+  "name": "Teste product using chi",
   "price": 100
 }
+
+###
+
+GET http://localhost:8080/products
+
+
+
+###
+
+GET http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b

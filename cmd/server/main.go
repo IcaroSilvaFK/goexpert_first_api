@@ -9,6 +9,7 @@ import (
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/infra/database"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/routes"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -22,6 +23,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	r.Use(middleware.Logger)
 	routes.InitializeProductsRoutes(r, db)
 	routes.InitializeUserRoutes(r, db)
 

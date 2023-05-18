@@ -10,6 +10,11 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+type Input struct {
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
+}
+
 type ProductController struct {
 	createProductService   services.CreateProductUseCaseInterface
 	findByIdProductService services.FindProductByIdUseCaseInterface
@@ -49,19 +54,28 @@ func (ct *ProductController) Create(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		w.Write([]byte("Method not allowed"))
-	}
-
-	var p entities.Product
-
-	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err := ct.createProductService.Execute(&p)
+	var i Input
+
+	if err := json.NewDecoder(r.Body).Decode(&i); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid input" + err.Error()))
+		return
+	}
+
+	p, err := entities.NewProduct(i.Name, i.Price)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid input" + err.Error()))
+		return
+	}
+	err = ct.createProductService.Execute(p)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error on create product " + err.Error()))
 		return
 	}
 
