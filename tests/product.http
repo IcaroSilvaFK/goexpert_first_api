@@ -1,4 +1,4 @@
-POST http://localhost:8080/products
+POST http://localhost:8080/products HTTP/1.1
 Content-Type: application/json
 
 {
@@ -8,16 +8,16 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8080/products
+GET http://localhost:8080/products HTTP/1.1
 
 
 
 ###
 
-GET http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b
+GET http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b HTTP/1.1
 
 ###
-PUT http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b
+PUT http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b HTTP/1.1
 Content-Type: application/json
 
 {
@@ -29,5 +29,5 @@ Content-Type: application/json
 
 ###
 
-DELETE  http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b
+DELETE  http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b HTTP/1.1
 
