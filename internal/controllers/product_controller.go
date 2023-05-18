@@ -7,6 +7,7 @@ import (
 
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/services"
+	"github.com/IcaroSilvaFK/goexpert_first_api/pkg/entity"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -99,6 +100,14 @@ func (ct *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	productId, err := entity.ParseID(id)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid input id"))
+		return
+	}
+
 	var p entities.Product
 
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
@@ -106,7 +115,15 @@ func (ct *ProductController) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := ct.updateProductService.Execute(id, p)
+	_, err = ct.findByIdProductService.Execute(productId.String())
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("Product not found"))
+		return
+	}
+
+	err = ct.updateProductService.Execute(productId.String(), p)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -199,7 +216,7 @@ func (ct *ProductController) ListById(w http.ResponseWriter, r *http.Request) {
 	p, err := ct.findByIdProductService.Execute(id)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("Error executing the service" + err.Error()))
 		return
 	}

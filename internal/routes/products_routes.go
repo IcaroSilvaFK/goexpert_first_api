@@ -31,5 +31,5 @@ func InitializeProductsRoutes(r *chi.Mux, db *gorm.DB) {
 	r.Get("/products", pController.List)
 	r.Get("/products/{id}", pController.ListById)
 	r.Put("/products/{id}", pController.Update)
-	r.Delete("/products/{id}", pController.Update)
+	r.Delete("/products/{id}", pController.Delete)
 }

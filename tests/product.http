@@ -15,3 +15,19 @@ GET http://localhost:8080/products
 ###
 
 GET http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b
+
+###
+PUT http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b
+Content-Type: application/json
+
+{
+  "name": "Teste update",
+  "price": 100
+}
+
+
+
+###
+
+DELETE  http://localhost:8080/products/3dba6b8a-e902-4f81-8b6f-2bd64e0bb33b
+
