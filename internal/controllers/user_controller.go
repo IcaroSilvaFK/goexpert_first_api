@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/IcaroSilvaFK/goexpert_first_api/internal/dtos"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/services"
 	"github.com/go-chi/chi/v5"
@@ -26,14 +27,22 @@ func NewUserController(us services.UserUseCaseInterface) UserControllerInterface
 }
 
 func (us *UserController) Create(w http.ResponseWriter, r *http.Request) {
-	var u entities.User
+	var user dtos.CreateUserInput
 
-	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	err := us.service.Create(&u)
+	u, err := entities.NewUserEntity(user.Email, user.Name, user.Password)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Error: " + err.Error()))
+		return
+	}
+
+	err = us.service.Create(u)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
