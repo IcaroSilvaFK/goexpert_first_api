@@ -50,5 +50,4 @@ func LoadConfig(path string) (*conf, error) {
 	cfg.TokenAuth = jwtauth.New("HS256", []byte(cfg.JWTSecret), nil)
 
 	return cfg, nil
-
 }

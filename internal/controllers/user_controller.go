@@ -2,28 +2,79 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/dtos"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/services"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth"
 )
 
 type UserController struct {
-	service services.UserUseCaseInterface
+	service  services.UserUseCaseInterface
+	jwt      *jwtauth.JWTAuth
+	jwtExpIn int
 }
 
 type UserControllerInterface interface {
 	Create(w http.ResponseWriter, r *http.Request)
 	ListById(w http.ResponseWriter, r *http.Request)
 	Delete(w http.ResponseWriter, r *http.Request)
+	GetJWT(w http.ResponseWriter, r *http.Request)
 }
 
-func NewUserController(us services.UserUseCaseInterface) UserControllerInterface {
+func NewUserController(us services.UserUseCaseInterface, jwt *jwtauth.JWTAuth, jwtExpIn int) UserControllerInterface {
 	return &UserController{
-		service: us,
+		service:  us,
+		jwt:      jwt,
+		jwtExpIn: jwtExpIn,
 	}
+}
+
+func (us *UserController) GetJWT(w http.ResponseWriter, r *http.Request) {
+
+	var user dtos.UserLogin
+
+	err := json.NewDecoder(r.Body).Decode(&user)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	u, err := us.service.FindByEmail(user.Email)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized"))
+		return
+	}
+
+	fmt.Println(u)
+
+	if err = u.ValidatePassword(user.Password); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unauthorized email or password is invalid"))
+		return
+	}
+	fmt.Println(us.jwtExpIn)
+	_, tokenString, _ := us.jwt.Encode(map[string]interface{}{
+		"sub": u.ID.String(),
+		"exp": time.Now().Add(time.Second * time.Duration(us.jwtExpIn)).Unix(),
+	})
+
+	accessTokenPayload := struct {
+		AccessToken string `json:"access_token"`
+	}{
+		AccessToken: tokenString,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(accessTokenPayload)
 }
 
 func (us *UserController) Create(w http.ResponseWriter, r *http.Request) {
@@ -46,6 +97,15 @@ func (us *UserController) Create(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// secret,err := configs.LoadConfig(".")
+
+	if err != nil {
+
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error: " + err.Error()))
 		return
 	}
 
