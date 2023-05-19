@@ -26,10 +26,12 @@ func InitializeProductsRoutes(r *chi.Mux, db *gorm.DB) {
 		pServiceDeleteProductService,
 		pServiceUpdateProductService,
 	)
+	r.Route("/products", func(r chi.Router) {
+		r.Post("/", pController.Create)
+		r.Get("/", pController.List)
+		r.Get("/{id}", pController.ListById)
+		r.Put("/{id}", pController.Update)
+		r.Delete("/{id}", pController.Delete)
+	})
 
-	r.Post("/products", pController.Create)
-	r.Get("/products", pController.List)
-	r.Get("/products/{id}", pController.ListById)
-	r.Put("/products/{id}", pController.Update)
-	r.Delete("/products/{id}", pController.Delete)
 }

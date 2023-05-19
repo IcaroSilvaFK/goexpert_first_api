@@ -16,8 +16,11 @@ func InitializeUserRoutes(r *chi.Mux, db *gorm.DB, jwt *jwtauth.JWTAuth, jwtExpI
 	userService := services.NewUserUseCase(uDB)
 	uController := controllers.NewUserController(userService, jwt, jwtExpIn)
 
-	r.Post("/users", uController.Create)
-	r.Post("/users/token", uController.GetJWT)
-	r.Get("/users/{id}", uController.ListById)
-	r.Delete("/users/{id}", uController.Delete)
+	r.Route("/users", func(r chi.Router) {
+		r.Post("/", uController.Create)
+		r.Post("/token", uController.GetJWT)
+		r.Get("/{id}", uController.ListById)
+		r.Delete("/{id}", uController.Delete)
+	})
+
 }
