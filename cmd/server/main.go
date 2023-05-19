@@ -24,7 +24,7 @@ func main() {
 	}
 
 	r.Use(middleware.Logger)
-	routes.InitializeProductsRoutes(r, db)
+	routes.InitializeProductsRoutes(r, db, cfg.TokenAuth)
 	routes.InitializeUserRoutes(r, db, cfg.TokenAuth, cfg.JWTExpiresIn)
 
 	log.Println("🚀Server running at port", cfg.WebServerPort)

@@ -1,5 +1,6 @@
 POST http://localhost:8080/products HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2ODQ0NTg1NjUsInN1YiI6IjcyY2I5NWZhLTE0MWQtNDhmZi05NzQxLWZmM2MyZmZhOTBhYiJ9.J_Zie6H6rzbdZSH4jW2fnDYPx-VmhmQy0CknLp_DCQg
 
 {
   "name": "Teste product using chi",

@@ -5,10 +5,11 @@ import (
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/infra/database"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/services"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth"
 	"gorm.io/gorm"
 )
 
-func InitializeProductsRoutes(r *chi.Mux, db *gorm.DB) {
+func InitializeProductsRoutes(r *chi.Mux, db *gorm.DB, jwt *jwtauth.JWTAuth) {
 
 	productDB := database.NewProductDB(db)
 	pServiceCreateProductService := services.NewCreateProductUseCase(productDB)
@@ -27,6 +28,8 @@ func InitializeProductsRoutes(r *chi.Mux, db *gorm.DB) {
 		pServiceUpdateProductService,
 	)
 	r.Route("/products", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(jwt))
+		r.Use(jwtauth.Authenticator)
 		r.Post("/", pController.Create)
 		r.Get("/", pController.List)
 		r.Get("/{id}", pController.ListById)
