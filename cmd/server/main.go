@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/IcaroSilvaFK/goexpert_first_api/configs"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
@@ -10,7 +11,72 @@ import (
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/routes"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"golang.org/x/time/rate"
 )
+
+type RateLimiter struct {
+	ips map[string]*rate.Limiter
+	mu  *sync.Mutex
+	r   rate.Limit
+	b   int
+}
+
+func NewIPRateLimiter(r rate.Limit, b int) *RateLimiter {
+	return &RateLimiter{
+		ips: make(map[string]*rate.Limiter),
+		mu:  &sync.Mutex{},
+		r:   r,
+		b:   b,
+	}
+}
+
+func (r *RateLimiter) AddIp(ip string) *rate.Limiter {
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	limiter := rate.NewLimiter(r.r, r.b)
+
+	r.ips[ip] = limiter
+
+	return limiter
+}
+
+func (r *RateLimiter) GetLimiter(ip string) *rate.Limiter {
+
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	limiter, exists := r.ips[ip]
+
+	if !exists {
+		r.mu.Unlock()
+		return r.AddIp(ip)
+	}
+
+	r.mu.Unlock()
+
+	return limiter
+}
+
+var limiter = NewIPRateLimiter(1, 5)
+
+func limitMiddleware(next http.Handler) http.Handler {
+
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			limiter := limiter.GetLimiter(r.RemoteAddr)
+
+			if !limiter.Allow() {
+				http.Error(w, http.StatusText(http.StatusTooManyRequests), http.StatusTooManyRequests)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		},
+	)
+
+}
 
 func main() {
 
@@ -29,7 +95,7 @@ func main() {
 
 	log.Println("🚀Server running at port", cfg.WebServerPort)
 
-	http.ListenAndServe(cfg.WebServerPort, r)
+	http.ListenAndServe(cfg.WebServerPort, limitMiddleware(r))
 }
 
 // type ProductHandler struct {
