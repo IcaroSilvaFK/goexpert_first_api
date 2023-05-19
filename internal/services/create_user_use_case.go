@@ -1,8 +1,6 @@
 package services
 
 import (
-	"fmt"
-
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/infra/database"
 )
@@ -25,8 +23,6 @@ func NewUserUseCase(userDB database.UserInterface) UserUseCaseInterface {
 }
 
 func (udb *CreateUserUseCase) Create(user *entities.User) error {
-
-	fmt.Println(user)
 
 	err := udb.userDB.Create(user)
 

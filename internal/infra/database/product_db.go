@@ -1,7 +1,6 @@
 package database
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/IcaroSilvaFK/goexpert_first_api/internal/entities"
@@ -67,8 +66,6 @@ func (p *Product) Update(id, name string, price float64) error {
 
 	product.Name = name
 	product.Price = price
-
-	fmt.Println(product)
 
 	return p.DB.Save(&product).Error
 

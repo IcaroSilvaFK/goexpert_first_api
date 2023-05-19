@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -14,9 +13,7 @@ import (
 )
 
 type UserController struct {
-	service  services.UserUseCaseInterface
-	jwt      *jwtauth.JWTAuth
-	jwtExpIn int
+	service services.UserUseCaseInterface
 }
 
 type UserControllerInterface interface {
@@ -26,11 +23,9 @@ type UserControllerInterface interface {
 	GetJWT(w http.ResponseWriter, r *http.Request)
 }
 
-func NewUserController(us services.UserUseCaseInterface, jwt *jwtauth.JWTAuth, jwtExpIn int) UserControllerInterface {
+func NewUserController(us services.UserUseCaseInterface) UserControllerInterface {
 	return &UserController{
-		service:  us,
-		jwt:      jwt,
-		jwtExpIn: jwtExpIn,
+		service: us,
 	}
 }
 
@@ -45,6 +40,9 @@ func (us *UserController) GetJWT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	jwt := r.Context().Value("auth").(*jwtauth.JWTAuth)
+	expires := r.Context().Value("expiresJWT").(int)
+
 	u, err := us.service.FindByEmail(user.Email)
 
 	if err != nil {
@@ -53,17 +51,14 @@ func (us *UserController) GetJWT(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(u)
-
 	if err = u.ValidatePassword(user.Password); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Unauthorized email or password is invalid"))
 		return
 	}
-	fmt.Println(us.jwtExpIn)
-	_, tokenString, _ := us.jwt.Encode(map[string]interface{}{
+	_, tokenString, _ := jwt.Encode(map[string]interface{}{
 		"sub": u.ID.String(),
-		"exp": time.Now().Add(time.Second * time.Duration(us.jwtExpIn)).Unix(),
+		"exp": time.Now().Add(time.Second * time.Duration(expires)).Unix(),
 	})
 
 	accessTokenPayload := struct {
