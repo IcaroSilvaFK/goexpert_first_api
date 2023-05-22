@@ -94,6 +94,23 @@ func myLoggerMiddleware(next http.Handler) http.Handler {
 	)
 }
 
+// @title GoExpert First API
+// @version 1.0
+// @description This is a sample server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Icaro Vieira
+// @contact.url https://github.com/IcaroSilvaFK
+// @contact.email 0mwYK@example.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 
 	cfg, err := configs.LoadConfig(".")
